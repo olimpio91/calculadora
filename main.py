@@ -51,7 +51,7 @@ class Application(Tk):
         self.button3 = Button(self.frame2, text="3", width=12, height=2, command=lambda:self.show(3))
         self.button_sum = Button(self.frame2, text="+", width=12, height=2, command=lambda:self.show("+"))
 
-        self.trocar = Button(self.frame2, text="+/-", width=12, height=2, command=self.substituir)
+        self.trocar = Button(self.frame2, text="+/-", width=12, height=2, command=self.trocar_sinal_pra_negativo)
         self.button0 = Button(self.frame2, text="0", width=12, height=2, command=lambda:self.show(0))
         self.button_decimal = Button(self.frame2, text=",", width=12, height=2, command=lambda:self.show(","))
         self.button_same = Button(self.frame2, text="=", width=12, height=2, command=self.result)
@@ -104,9 +104,30 @@ class Application(Tk):
     def clearAll(self):
         self.entry.delete(0,END)
 
-    def substituir(self):
-        pass
+    def trocar_sinal_pra_negativo(self):
         
+        methods = ["+", "-", "*", "/"]
+        ponteiro = self.entry.index(INSERT)
+        elementos = self.entry.get()
+
+        for x in methods:
+
+            if x not in elementos:
+                self.entry.delete(0,END)
+                self.entry.insert(0,-int(elementos))
+                break
+            elif x in elementos:
+
+                if self.entry.index(INSERT) > elementos.index(x):
+                    self.entry.delete(elementos.index(x) + 1, END)
+                    self.entry.insert(elementos.index(x) + 1,-int(elementos[elementos.index(x) + 1:]))
+                    break
+
+                else:
+                    self.entry.delete(0, elementos.index(x))
+                    self.entry.insert(0 ,-int(elementos[:elementos.index(x)]))
+                    break
+
     def utils(self):
         self.methods = ["+", "-", "*", "/"]
         self.elements = self.entry.get()
@@ -114,27 +135,22 @@ class Application(Tk):
         self.secundNumbers = str()
         self.method = list()
 
-        print("entrada:", self.entry.get())
         for x in self.methods:
             if x in self.elements:
+                
                 self.position = self.elements.index(x)
                 self.method.append(self.elements[self.position])
-
-        print("metodo:", self.method)
-
+                
+                    
         if "," in self.elements:
             self.elements = self.elements.replace(",", ".")
             self.firstNumbers = float("".join(self.elements[0:self.position]))
             self.secundNumbers = float("".join(self.elements[self.position + 1 : len(self.elements) + 1]))
 
-            return print("numeros primeiro elemento:", self.firstNumbers, "numeros segundo elemento:", self.secundNumbers)
         else:
             self.firstNumbers = int("".join(self.elements[0:self.position]))
             self.secundNumbers = int("".join(self.elements[self.position + 1 : len(self.elements) + 1]))
             
-            return print("numeros primeiro elemento:", self.firstNumbers, "numeros segundo elemento:", self.secundNumbers)
-
-
     def sum(self):
         if "+" in self.method:
             soma = self.firstNumbers + self.secundNumbers
